@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Aziza Revenue Dashboard</title>
+    <script>
+        const BASE_URL = "http://47.129.34.34:5000"; 
+
+        async function loadData() {
+            try {
+                const res = await fetch(`${BASE_URL}/data`);
+                const data = await res.json();
+                let table = "<table border='1'><tr><th>ID</th><th>Area</th><th>Years</th><th>Revenue</th></tr>";
+                for (let row of data) {
+                    table += `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td></tr>`;
+                }
+                table += "</table>";
+                document.getElementById("result").innerHTML = table;
+            } catch (err) {
+                console.error("Load error:", err);
+            }
+        }
+
+        async function addDummy() {
+            try {
+                await fetch(`${BASE_URL}/add`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ area: "Dummy Area", years: "Q2-2025", revenue: 987654321 })
+                });
+                loadData();
+            } catch (err) {
+                console.error("Add error:", err);
+            }
+        }
+
+        async function deleteDummy() {
+            try {
+                await fetch(`${BASE_URL}/delete`, {
+                    method: "POST"
+                });
+                loadData();
+            } catch (err) {
+                console.error("Delete error:", err);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Aziza Revenue Dashboard</h1>
+    <button onclick="loadData()">Load Data</button>
+    <button onclick="addDummy()">Add Dummy</button>
+    <button onclick="deleteDummy()">Delete Last</button>
+    <div id="result"></div>
+</body>
+</html>
